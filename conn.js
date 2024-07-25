@@ -6,16 +6,16 @@ const con = mongoose.connection;
 con.on('open', () => {
     console.log("connection success");
 })
+const foodDetailsSchema = new mongoose.Schema({
+    "dishname": "String",
 
-const formSchema = new mongoose.Schema({
-    name: String,
-    email: String,
-    password: String,
-    confirmpassword: String
+    "dishprice": "String",
+    "dishimage": "String",
+
 })
 
-const Form = mongoose.model('Form',formSchema)
-const userSchema = new mongoose.Schema({
+const FoodDetails = mongoose.model('FoodDetails',foodDetailsSchema)
+const signinSchema = new mongoose.Schema({
     name: String,
     email: {
         type:String,
@@ -25,8 +25,8 @@ const userSchema = new mongoose.Schema({
     confirmpassword:String,
 })
 
-const User = mongoose.model('User',userSchema)
+const Signin = mongoose.model('Signin',signinSchema)
 
-export {Form,User}
+export {Signin,FoodDetails}
 
 

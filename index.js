@@ -3,7 +3,7 @@ import cors from "cors"
 import bodyParser from "body-parser";
 import bcrypt from "bcrypt"
 import multer from "multer";
-import { Form, User } from "./conn.js"
+import { Signin, FoodDetails } from "./conn.js"
 import path from "path"
 import { fileURLToPath } from 'url';
 
@@ -11,8 +11,8 @@ import { fileURLToPath } from 'url';
 const app = express();
 
 //use for file send
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 //use for get input from api (req.body)
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -21,18 +21,18 @@ app.use(bodyParser.json())
 app.use(cors());
 
 //use multer for file upload (get image in backend)
-// const storage = multer.diskStorage({
-//     destination: function (req, file, cb) {
-//         cb(null, './upload')
-//     },
-//     filename: function (req, file, cb) {
-//         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-//         cb(null, file.fieldname + '-' + uniqueSuffix)
-//     }
-// })
-// const upload = multer({ storage: storage })
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './upload')
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+        cb(null, file.fieldname + '-' + uniqueSuffix)
+    }
+})
+const upload = multer({ storage: storage })
 
-// //test api of backend
+//test api of backend
 // app.get("/", async (req, res) => {
 //     try {
 //         res.json({ data: null, message: "Hello backend" })
@@ -73,54 +73,54 @@ app.post("/signin", async (req, res) => {
 })
 
 //post api for booking form 
-// app.post("/bookingform", upload.fields([{ name: 'hotelimage', maxCount: 1 }]), async (req, res) => {
-//     try {
-//         const { hotelemail, hotellocation, hotelname, hotelphone, hotelrent } = req.body;
-//         const obj = {
-//             hotelname: hotelname,
-//             hotelphone: hotelphone,
-//             hotelemail: hotelemail,
-//             hotellocation: hotellocation,
-//             hotelrent: hotelrent,
-//             hotelimage: req.files.hotelimage[0].filename
-//         }
-//         const newForm = new Form(obj)
-//         const formData = await newForm.save()
-//         console.log(formData);
-//         // console.log(req.body);
-//         // console.log(req.files);
-//         res.status(200).json({ data: null, message: "Form submitted successfully" })
-//     }
-//     catch (err) {
-//         console.log(err)
-//         res.status(500).json({ data: null, message: err.message })
-//     }
-// })
+app.post("/FoodDetails", upload.fields([{ name: 'dishimage', maxCount: 1 }]), async (req, res) => {
+    try {
+        const { dishname,  dishprice} = req.body;
+        const obj = {
+            dishprice: dishprice,
+            dishname: dishname,
+            dishimage: req.files.dishimage[0].filename
+        }
+        const newFoodDetails = new FoodDetails(obj)
+        const foodDetailsData = await newFoodDetails.save()
+        console.log(foodDetailsData);
+        // console.log(req.body);
+        // console.log(req.files);
+        
+        
+        res.status(200).json({ data: null, message: "Form submitted successfully" })
+
+    }
+    catch (err) {
+        console.log(err)
+        res.status(500).json({ data: null, message: err.message })
+    }
+})
 
 // //get api for get booking data
-// app.get('/bookingdata', async (req, res) => {
-//     try {
-//         const allData = await Form.find();
-//         res.status(200).json(allData)
-//     } catch (err) {
-//         console.log(err);
-//         res.status(500).json({ data: null, message: err.message })
-//     }
-// })
+app.get('/FoodDetails', async (req, res) => {
+    try {
+        const allData = await FoodDetails.find();
+        res.status(200).json(allData)
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ data: null, message: err.message })
+    }
+})
 
 
 // create image api for image get from backend
-// app.get('/image/:imageName', (req, res) => {
-//     try {
+app.get('/image/:imageName', (req, res) => {
+    try {
 
-//         const imageName = req.params.imageName;
-//         const imagePath = path.join(__dirname, 'upload', imageName);
-//         res.sendFile(imagePath);
-//     }
-//     catch (err) {
-//         res.status(500).json({ data: null, message: err.message })
-//     }
-// });
+        const imageName = req.params.imageName;
+        const imagePath = path.join(__dirname, 'upload', imageName);
+        res.sendFile(imagePath);
+    }
+    catch (err) {
+        res.status(500).json({ data: null, message: err.message })
+    }
+});
 
 //delete api for delete booking data by id
 // app.delete("/bookingdatadelete/:id", async (req, res) => {
